@@ -13,7 +13,7 @@
 <body>
     <h1>Chronozoom <-> AdlibImporter </h1>
     
-
+    <!-- URL INPUT PART-->
     <div id="urlInput" class="ui segment">
         <div class="ui form">
             <div class="inline field">
@@ -22,9 +22,9 @@
                     <button class="ui button default" onclick="Importer.Formhandler.GetXmlElementsFromUrl()">Download</button>
             </div>
         </div>
-        
     </div>
 
+    <!-- XML PROPERTY MAPPER-->
     <div id="inputForm" class="ui hidden form segment display-none">
 
         <div class="field required">
@@ -62,5 +62,31 @@
         <div class="ui submit button">Submit</div>
     </div>
 
+    <!-- GROUP BY ACTIONS PART-->
+    <div id="actionForm" class="ui form segment">
+        <h4 class="ui dividing header">Group by actions</h4>
+        <div class="two fields">
+            <div class="required field">
+                <label>Group by</label>
+                <select id="groupby"></select>
+            </div>
+            <div class="field">
+                <label>Actions</label>
+                <div class="ui divided list">
+                    <div class="item">
+                        <div class="right floated compact ui button">Remove</div>
+                        <div class="content">
+                            <div class="header">Group by: Creator</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="right floated compact ui button">Remove</div>
+                        <div class="content">
+                            <div class="header">Group by: Material</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
 </html>
