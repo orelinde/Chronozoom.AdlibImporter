@@ -68,7 +68,6 @@
     <Content Include="index.html" />
     <Content Include="Scripts\Formhandler.js" />
     <Content Include="Scripts\Importer.js" />
-    <Content Include="Scripts\Test.js" />
     <Content Include="Scripts\Webhandler.js" />
     <Content Include="Style.css" />
     <Content Include="Web.config" />

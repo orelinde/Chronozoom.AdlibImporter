@@ -1,33 +1,16 @@
 ﻿(function (Formhandler) {
+
+    /* Makes the inputUrl on loading state and the input form 
+    visible if the data is correctly received. Also will the select lists be populated 
+    with the xml elements*/
     var getXmlElementsFromUrl = function () {
-        var url = document.getElementById("url").value;
-        url = "http://am.adlibhosting.com/ChronoZoom/wwwopac.ashx?command=search&database=collect";
-        var dropdownlistoptions = "";
-        $.ajax({
-            url: url + '&output=json&limit=1&search=all&xmltype=unstructured',
-            type: "GET",
-            dataType: "jsonp",
-            async: true,
-            cache: false,
-            contentType: "application/x-www-form-urlencoded",
-            data: 'json',
-            success: function (data) {
 
-                //Check the diagnostic node for errors
-                if (data.adlibJSON.diagnostic.error != undefined) {
-                    alert("error: " + data.adlibJSON.diagnostic.error.message);
-                }
-                else {
-                    callback(data.adlibJSON);
-                }
-            },
-            error: function (xhr, msg) {
-                alert("error: " + xhr.responseText + " " + msg);
-            }
-        });
-
+        /* The JSONP callback on success function which will scrape the xml elements
+        from the received data. The method also checks if the returned data has the
+        right properties to parse. if true then it will create a select list*/
         var callback = function (data) {
-            console.log(data);
+            inputFormIsVisisble(true);
+            inputUrlPartIsLoading(false);
             if (!data.hasOwnProperty("recordList")) console.log("No recordList");
             if (!data.recordList.hasOwnProperty("record")) console.log("No recordslist found");
             if (!data.recordList.length === 0) console.log("No records found");
@@ -35,14 +18,27 @@
             for (var prop in record) {
                 if (prop === "@attributes") {
                     for (var attr in record['@attributes']) {
-                        appendToDropdownlis(attr);
+                        appendToDropdownlist(attr);
                     }
                 }
-                appendToDropdownlis(prop);
+                appendToDropdownlist(prop);
             }
             setLists();
         }
 
+        // Hide the input form
+        inputFormIsVisisble(false);
+
+        var url = document.getElementById("url").value;
+        url = "http://am.adlibhosting.com/ChronoZoom/wwwopac.ashx?command=search&database=collect"; // TEMPORARY FOR DEBUG
+
+        // Call api and make url part in loading state
+        inputUrlPartIsLoading(true);
+        Importer.Webhandler.GetXmlElementsFromUrl(url, callback);
+
+        var dropdownlistoptions = "";
+
+        // Set the options on the selectlist on the html
         function setLists() {
             var list = createSelectList();
             document.getElementById("title").innerHTML = list;
@@ -54,13 +50,33 @@
 
         }
 
-        function appendToDropdownlis(option) {
+        //Helper method to create an option per xml element
+        function appendToDropdownlist(option) {
             dropdownlistoptions = dropdownlistoptions + "<option value=\"" + option + "\">" + option + "</option>";
         }
 
+        // Append empty value and return the list with options
         function createSelectList() {
             var emptyOption = "<option value=\"null\"></option>";
-            return "<select>"+ emptyOption + dropdownlistoptions + "</select>";
+            return  emptyOption + dropdownlistoptions;
+        }
+
+
+        function inputUrlPartIsLoading(isLoading) {
+            var urlInputForm = document.getElementById("urlInput");
+            if (isLoading) {
+                urlInputForm.classList.add('loading');
+            } else {
+                urlInputForm.classList.remove('loading');
+            }
+        }
+        function inputFormIsVisisble(isVisible) {
+            var inputForm = document.getElementById("inputForm");
+            if (isVisible) {
+                inputForm.style.display = "block";
+            } else {
+                inputForm.style.display = "none";
+            }
         }
      }
 

@@ -6,4 +6,6 @@
 body{
     margin:40px;
 }
-
+.display-none{
+    display:none;
+}

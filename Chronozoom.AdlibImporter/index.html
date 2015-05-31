@@ -14,7 +14,7 @@
     <h1>Chronozoom <-> AdlibImporter </h1>
     
 
-    <div class="ui segment">
+    <div id="urlInput" class="ui segment">
         <div class="ui form">
             <div class="inline field">
                     <label>Url</label>
@@ -23,42 +23,40 @@
             </div>
         </div>
         
-
-        
     </div>
 
-    <div class="ui form segment">
+    <div id="inputForm" class="ui hidden form segment display-none">
 
         <div class="field required">
             <label>Title</label>
-            <div id="title"></div>
+            <select id="title"></select>
         </div>
 
         <div class="field">
             <label>Description</label>
-            <div id="description"></div>
+            <select id="description"></select>
         </div>
 
         <div class="two fields">
             <div class="field required">
                 <label>Begindate</label>
-                <div id="begindate"></div>
+                <select id="begindate"></select>
             </div>
 
             <div class="field required">
                 <label>Enddate</label>
-                <div id="enddate"></div>
+                <select id="enddate"></select>
             </div>
         </div>
 
         <div class="field">
             <label>Images</label>
-            <div id="images"></div>
+            <select id="images"></select>
         </div>
 
         <div class="field required">
             <label>Id / Priref</label>
-            <div id="id"></div>
+            <select id="id"></select>
         </div>
 
         <div class="ui submit button">Submit</div>
