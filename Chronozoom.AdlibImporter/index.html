@@ -21,25 +21,26 @@
         <div class="ui form">
             <div class="inline field">
                 <label>Base url</label>
-                <input id="url" type="url" placeholder="Webapi adres">
+                <input id="url" value="http://am.adlibhosting.com/ChronoZoom/" type="url" placeholder="Webapi adres">
                 <label>Database</label>
-                <input id="database" type="url" placeholder="collect">
-                <button class="ui button default" onclick="Importer.Formhandler.GetXmlElementsFromUrl()">Download</button>
+                <input id="database" type="text" value="collect" placeholder="collect">
+                <button class="ui button default" onclick="Importer.Formhandler.GetXmlElementsFromUrl(0)">Chronozoom</button>
+                <button class="ui button default" onclick="Importer.Formhandler.GetXmlElementsFromUrl(1)">Amsterdam museum</button>
             </div>
         </div>
     </div>
 
     <!-- XML PROPERTY MAPPER-->
-    <div id="inputForm" class="ui hidden form segment display-none">
+    <div id="inputForm" class="ui form segment display-none">
         <h4>Timeline details</h4>
         <div class="ui divider"></div>
         <div class="field required">
             <label>Timeline title</label>
-            <input id="timelinetitle"/>
+            <input placeholder="Enter a title for the timeline that will be created" id="timelinetitle"/>
         </div>
         <div class="field required">
             <label>Timeline description</label>
-            <input id="timelinedescription"/>
+            <input placeholder="Give this timeline a short description" id="timelinedescription"/>
         </div>
         <h4>Mapper</h4>
         <div class="ui divider"></div>
@@ -79,7 +80,7 @@
     </div>
 
     <!-- GROUP BY ACTIONS PART-->
-    <div id="actionForm" class="ui form segment ">
+    <div id="actionForm" class="ui form segment display-none">
         <h4 class="ui dividing header">Group by actions</h4>
         <div class="two fields">
             <div class="field">
