@@ -8,15 +8,28 @@
     <script src="Scripts/Formhandler.js"></script>
     <script src="Scripts/Webhandler.js"></script>
     <script src="http://code.jquery.com/jquery-git2.min.js"></script>
+    <link href="Style.css" rel="stylesheet" />
 </head>
 <body>
-    <input id="url" type="url" placeholder="Webapi adres">
+    <h1>Chronozoom <-> AdlibImporter </h1>
+    
 
-    <button onclick="Importer.Formhandler.GetXmlElementsFromUrl()">Get url data</button>
+    <div class="ui segment">
+        <div class="ui form">
+            <div class="inline field">
+                    <label>Url</label>
+                    <input id="url" type="url" placeholder="Webapi adres">
+                    <button class="ui button default" onclick="Importer.Formhandler.GetXmlElementsFromUrl()">Download</button>
+            </div>
+        </div>
+        
+
+        
+    </div>
 
     <div class="ui form segment">
 
-        <div class="field">
+        <div class="field required">
             <label>Title</label>
             <div id="title"></div>
         </div>
@@ -27,12 +40,12 @@
         </div>
 
         <div class="two fields">
-            <div class="field">
+            <div class="field required">
                 <label>Begindate</label>
                 <div id="begindate"></div>
             </div>
 
-            <div class="field">
+            <div class="field required">
                 <label>Enddate</label>
                 <div id="enddate"></div>
             </div>
@@ -43,7 +56,7 @@
             <div id="images"></div>
         </div>
 
-        <div class="field">
+        <div class="field required">
             <label>Id / Priref</label>
             <div id="id"></div>
         </div>
