@@ -12,21 +12,35 @@
 </head>
 <body>
     <h1>Chronozoom <-> AdlibImporter </h1>
-    
+
     <!-- URL INPUT PART-->
     <div id="urlInput" class="ui segment">
+        <div id="urlInputLoader" class="ui dimmer">
+            <div class="ui text loader">Fetching Xml record....</div>
+        </div>
         <div class="ui form">
             <div class="inline field">
-                    <label>Url</label>
-                    <input id="url" type="url" placeholder="Webapi adres">
-                    <button class="ui button default" onclick="Importer.Formhandler.GetXmlElementsFromUrl()">Download</button>
+                <label>Url</label>
+                <input id="url" type="url" placeholder="Webapi adres">
+                <button class="ui button default" onclick="Importer.Formhandler.GetXmlElementsFromUrl()">Download</button>
             </div>
         </div>
     </div>
 
     <!-- XML PROPERTY MAPPER-->
     <div id="inputForm" class="ui hidden form segment display-none">
-
+        <h4>Timeline details</h4>
+        <div class="ui divider"></div>
+        <div class="field required">
+            <label>Timeline title</label>
+            <input id="timelinetitle"/>
+        </div>
+        <div class="field required">
+            <label>Timeline description</label>
+            <input id="timelinedescription"/>
+        </div>
+        <h4>Mapper</h4>
+        <div class="ui divider"></div>
         <div class="field required">
             <label>Title</label>
             <select id="title"></select>
@@ -63,7 +77,7 @@
     </div>
 
     <!-- GROUP BY ACTIONS PART-->
-    <div id="actionForm" class="ui form segment">
+    <div id="actionForm" class="ui form segment display-none">
         <h4 class="ui dividing header">Group by actions</h4>
         <div class="two fields">
             <div class="required field">
@@ -88,5 +102,13 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="ui buttons">
+        <div class="ui negative button">Reset</div>
+        <div class="or"></div>
+        <div class="ui positive button">Create timeline</div>
+    </div>
+
+
 </body>
 </html>

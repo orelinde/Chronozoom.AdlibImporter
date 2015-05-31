@@ -10,6 +10,7 @@
         right properties to parse. if true then it will create a select list*/
         var callback = function (data) {
             inputFormIsVisisble(true);
+            actionFormIsVisisble(true);
             inputUrlPartIsLoading(false);
             if (!data.hasOwnProperty("recordList")) console.log("No recordList");
             if (!data.recordList.hasOwnProperty("record")) console.log("No recordslist found");
@@ -28,7 +29,7 @@
 
         // Hide the input form
         inputFormIsVisisble(false);
-
+        actionFormIsVisisble(false);
         var url = document.getElementById("url").value;
         url = "http://am.adlibhosting.com/ChronoZoom/wwwopac.ashx?command=search&database=collect"; // TEMPORARY FOR DEBUG
 
@@ -63,15 +64,23 @@
 
 
         function inputUrlPartIsLoading(isLoading) {
-            var urlInputForm = document.getElementById("urlInput");
+            var urlInputForm = document.getElementById("urlInputLoader");
             if (isLoading) {
-                urlInputForm.classList.add('loading');
+                urlInputForm.classList.add('active');
             } else {
-                urlInputForm.classList.remove('loading');
+                urlInputForm.classList.remove('active');
             }
         }
         function inputFormIsVisisble(isVisible) {
             var inputForm = document.getElementById("inputForm");
+            if (isVisible) {
+                inputForm.style.display = "block";
+            } else {
+                inputForm.style.display = "none";
+            }
+        }
+        function actionFormIsVisisble(isVisible) {
+            var inputForm = document.getElementById("actionForm");
             if (isVisible) {
                 inputForm.style.display = "block";
             } else {
