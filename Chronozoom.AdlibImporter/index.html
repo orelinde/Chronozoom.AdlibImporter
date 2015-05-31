@@ -10,7 +10,46 @@
     <script src="http://code.jquery.com/jquery-git2.min.js"></script>
 </head>
 <body>
-    <input id="url" type="url" placeholder="Webapi adres" >
+    <input id="url" type="url" placeholder="Webapi adres">
+
     <button onclick="Importer.Formhandler.GetXmlElementsFromUrl()">Get url data</button>
+
+    <div class="ui form segment">
+
+        <div class="field">
+            <label>Title</label>
+            <div id="title"></div>
+        </div>
+
+        <div class="field">
+            <label>Description</label>
+            <div id="description"></div>
+        </div>
+
+        <div class="two fields">
+            <div class="field">
+                <label>Begindate</label>
+                <div id="begindate"></div>
+            </div>
+
+            <div class="field">
+                <label>Enddate</label>
+                <div id="enddate"></div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Images</label>
+            <div id="images"></div>
+        </div>
+
+        <div class="field">
+            <label>Id / Priref</label>
+            <div id="id"></div>
+        </div>
+
+        <div class="ui submit button">Submit</div>
+    </div>
+
 </body>
 </html>
