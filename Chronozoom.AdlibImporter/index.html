@@ -77,12 +77,19 @@
     </div>
 
     <!-- GROUP BY ACTIONS PART-->
-    <div id="actionForm" class="ui form segment display-none">
+    <div id="actionForm" class="ui form segment ">
         <h4 class="ui dividing header">Group by actions</h4>
         <div class="two fields">
-            <div class="required field">
-                <label>Group by</label>
-                <select id="groupby"></select>
+            <div class="field">
+                <div class="required field">
+                    <label>Group by</label>
+                    <select id="groupby"></select>
+                </div>
+                <div class="required field">
+                    <label>Category name</label>
+                    <input id="categoryname" />
+                </div>
+                <button class="ui button">Append action</button>
             </div>
             <div class="field">
                 <label>Actions</label>
@@ -91,12 +98,14 @@
                         <div class="right floated compact ui button">Remove</div>
                         <div class="content">
                             <div class="header">Group by: Creator</div>
+                            Category title : Sorted by Creator
                         </div>
                     </div>
                     <div class="item">
                         <div class="right floated compact ui button">Remove</div>
                         <div class="content">
                             <div class="header">Group by: Material</div>
+                            Category title : Materials per creator
                         </div>
                     </div>
                 </div>
