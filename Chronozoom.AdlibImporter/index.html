@@ -4,7 +4,6 @@
     <title>Adlib importer tool</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.12.2/semantic.css" />
     <script src="Scripts/Importer.js"></script>
-    <script src="Scripts/Test.js"></script>
     <script src="Scripts/Formhandler.js"></script>
     <script src="Scripts/Webhandler.js"></script>
     <script src="http://code.jquery.com/jquery-git2.min.js"></script>
@@ -30,17 +29,28 @@
         </div>
     </div>
 
+    <div id="errorBlock" class="ui error message display-none">
+        <i class="close icon"></i>
+        <div class="header">
+            There was some errors with your submission
+        </div>
+        <ul id="errorList" class="list">
+            <li>You must include both a upper and lower case letters in your password.</li>
+            <li>You need to select your home country.</li>
+        </ul>
+    </div>
+
     <!-- XML PROPERTY MAPPER-->
     <div id="inputForm" class="ui form segment display-none">
         <h4>Timeline details</h4>
         <div class="ui divider"></div>
         <div class="field required">
             <label>Timeline title</label>
-            <input placeholder="Enter a title for the timeline that will be created" id="timelinetitle"/>
+            <input placeholder="Enter a title for the timeline that will be created" id="timelinetitle" />
         </div>
         <div class="field required">
             <label>Timeline description</label>
-            <input placeholder="Give this timeline a short description" id="timelinedescription"/>
+            <input placeholder="Give this timeline a short description" id="timelinedescription" />
         </div>
         <h4>Mapper</h4>
         <div class="ui divider"></div>
@@ -118,7 +128,7 @@
     <div class="ui buttons">
         <div class="ui negative button">Reset</div>
         <div class="or"></div>
-        <div class="ui positive button">Create timeline</div>
+        <div class="ui positive button" onclick="Importer.Formhandler.CreateBatchCommand()">Create timeline</div>
     </div>
 
 

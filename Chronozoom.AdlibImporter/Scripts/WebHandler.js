@@ -50,9 +50,27 @@
         });
     }
 
+    //Send the batch command
+    var createBatchCommand = function (batchCommand, createBatchCallback) {
+        
+        $.post("http://localhost:13442/api/batch", JSON.stringify({})).fail(function (data) {
+            if (data.responseJSON.hasOwnProperty("ModelState")) {
+                var errors = [];
+                for (var property in data.responseJSON.ModelState) {
+                    for (var i = 0; i < data.responseJSON.ModelState[property].length; i++) {
+                        errors.push(data.responseJSON.ModelState[property][i]);
+                    }
+                }
+                createBatchCallback(errors);
+            }
+        });
 
+    };
+          
+    
     // Public properties
     Webhandler.GetXmlElementsFromUrl = getXmlElementsFromUrl;
     Webhandler.GetMetadata = getMetadata;
+    Webhandler.CreateBatchCommand = createBatchCommand;
 
 }(Importer.Webhandler = {}));
