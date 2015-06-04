@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chronozoom.AdlibImporter", "Chronozoom.AdlibImporter\Chronozoom.AdlibImporter.csproj", "{2CC87A9F-7A25-4C2C-AE61-7DCE1976828D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chronozoom.AdlibImporter.Frontend", "Chronozoom.AdlibImporter\Chronozoom.AdlibImporter.Frontend.csproj", "{2CC87A9F-7A25-4C2C-AE61-7DCE1976828D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chronozoom.AdlibImporter.Backend", "Chronozoom.AdlibImporter.Backend\Chronozoom.AdlibImporter.Backend.csproj", "{DC05CCCD-595C-4BC4-939F-CC738F6DDA8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{2CC87A9F-7A25-4C2C-AE61-7DCE1976828D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CC87A9F-7A25-4C2C-AE61-7DCE1976828D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CC87A9F-7A25-4C2C-AE61-7DCE1976828D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC05CCCD-595C-4BC4-939F-CC738F6DDA8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC05CCCD-595C-4BC4-939F-CC738F6DDA8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC05CCCD-595C-4BC4-939F-CC738F6DDA8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC05CCCD-595C-4BC4-939F-CC738F6DDA8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
