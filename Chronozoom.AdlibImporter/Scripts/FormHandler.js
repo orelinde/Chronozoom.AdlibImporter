@@ -107,7 +107,11 @@
         }
     }
 
+    var actions = [];
+
     function createBatchCommand() {
+        errorsIsVisisble(false);
+
         // Timeline elements
         var timelineTitle = htmlElementValue("timelinetitle");
         var timelineDescription = htmlElementValue("timelinedescription");
@@ -120,10 +124,24 @@
         var images = htmlDropDownValue("images");
         var id = htmlDropDownValue("id");
 
-        Importer.Webhandler.CreateBatchCommand(0,createBatchCallback);
+        var batch = {
+            Mappings: {
+                Title: title,
+                Description: description,
+                Begindate: begindate,
+                Enddate: enddate,
+                Images: images,
+                Id : id
+            },
+            Actions:actions,
+            Title: timelineTitle,
+            Description : timelineDescription
+        }
+
+        Importer.Webhandler.CreateBatchCommand(batch,createBatchCallback);
     }
 
-    var actions = [];
+    
     function removeAction(index) {
         actions.splice(index, 1);
         rebuildActionList();
