@@ -70,6 +70,7 @@
             document.getElementById("enddate").innerHTML = list;
             document.getElementById("images").innerHTML = list;
             document.getElementById("id").innerHTML = list;
+            document.getElementById("groupby").innerHTML = list;
 
         }
 
@@ -105,12 +106,61 @@
             errorsIsVisisble(true, errors);
         }
     }
+
     function createBatchCommand() {
+        // Timeline elements
+        var timelineTitle = htmlElementValue("timelinetitle");
+        var timelineDescription = htmlElementValue("timelinedescription");
+
+        // Mapper elements
+        var title = htmlDropDownValue("title");
+        var description = htmlDropDownValue("description");
+        var begindate = htmlDropDownValue("begindate");
+        var enddate = htmlDropDownValue("enddate");
+        var images = htmlDropDownValue("images");
+        var id = htmlDropDownValue("id");
+
         Importer.Webhandler.CreateBatchCommand(0,createBatchCallback);
+    }
+
+    var actions = [];
+    function removeAction(index) {
+        actions.splice(index, 1);
+        rebuildActionList();
+    }
+
+    function reset() {
+       
+    }
+
+    function addAction() {
+        var groupBy = htmlDropDownValue("groupby");
+        var categoryName = htmlElementValue("categoryname");
+        var action = { GroupBy : groupBy, CategoryName : categoryName };
+        actions.push(action);
+        rebuildActionList();
+    }
+
+    function rebuildActionList() {
+        var list = document.getElementById("actionsList");
+        list.innerHTML = "";
+        for (var i = 0; i < actions.length; i++) {
+            list.innerHTML = list.innerHTML + "<div class=\"item\">" +
+                "<div onClick=\"Importer.Formhandler.RemoveAction(" + i + ")\" class=\"right floated compact ui button\">Remove</div>" +
+                "<div class=\"content\">" +
+                "<div class=\"header\">" + actions[i].GroupBy + "</div>" + actions[i].CategoryName + "</div>" +
+                "</div>";
+        }
+         
+        
     }
 
     function htmlElementValue(value) {
         return document.getElementById(value).value;
+    }
+    function htmlDropDownValue(element) {
+        var element = document.getElementById(element);
+        return element.options[element.selectedIndex].value;
     }
     function inputUrlPartIsLoading(isLoading) {
         var urlInputForm = document.getElementById("urlInputLoader");
@@ -152,4 +202,7 @@
 
     Formhandler.GetXmlElementsFromUrl = getXmlElementsFromUrl;
     Formhandler.CreateBatchCommand = createBatchCommand;
+    Formhandler.RemoveAction = removeAction;
+    Formhandler.Reset = reset;
+    Formhandler.AddAction = addAction;
 }(Importer.Formhandler = {}));

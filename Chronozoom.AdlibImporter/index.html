@@ -102,11 +102,11 @@
                     <label>Category name</label>
                     <input id="categoryname" />
                 </div>
-                <button class="ui button">Append action</button>
+                <button class="ui button" onclick="Importer.Formhandler.AddAction()">Append action</button>
             </div>
             <div class="field">
                 <label>Actions</label>
-                <div class="ui divided list">
+                <div class="ui divided list" id="actionsList">
                     <div class="item">
                         <div class="right floated compact ui button">Remove</div>
                         <div class="content">
