@@ -13,6 +13,7 @@
         {
             if(command == null) return BadRequest("Post value is null");
             if (!ModelState.IsValid) return new InvalidModelStateResult(ModelState,this);
+            BatchProcessor.BatchProcessor.StartNew(command);
             return Ok();
         }
 
