@@ -112,6 +112,10 @@
     function createBatchCommand() {
         errorsIsVisisble(false);
 
+        // Data source
+        var url = htmlElementValue("url");
+        var database = htmlElementValue("database");
+
         // Timeline elements
         var timelineTitle = htmlElementValue("timelinetitle");
         var timelineDescription = htmlElementValue("timelinedescription");
@@ -125,6 +129,8 @@
         var id = htmlDropDownValue("id");
 
         var batch = {
+            BaseUrl: url,
+            Database : database,
             Mappings: {
                 Title: title,
                 Description: description,

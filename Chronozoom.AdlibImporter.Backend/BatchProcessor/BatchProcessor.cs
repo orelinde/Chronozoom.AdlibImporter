@@ -15,7 +15,8 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             var totalBatchTask = Task.Factory.StartNew(() =>
             {
                 AdlibFacetsRecords adlibFacetsRecords = AdlibApi.GetFacets(command.BaseUrl,command.Database,command.Actions[0].GroupBy);
-                var items = AdlibApi.GetContentItemsByFacets(command.BaseUrl, command.Database, command.Actions[0].GroupBy, adlibFacetsRecords);
+                var items = AdlibApi.GetContentItemsByFacets(command.BaseUrl, command.Database, command.Actions[0].GroupBy, adlibFacetsRecords,command.Mappings.Title);
+                var count = items.Count;
                 //Parallel.ForEach(command.Actions, action =>
                 //{
                 //    //Download the facets list with actionname i.e. Creator.role
