@@ -4,6 +4,7 @@
     using System.Web.Http.Cors;
     using System.Web.Http.Results;
     using Models;
+    using BatchProcessor;
 
     [EnableCors(origins:"*",headers:"*",methods:"*")]
     public class BatchController : ApiController
@@ -13,7 +14,8 @@
         {
             if(command == null) return BadRequest("Post value is null");
             if (!ModelState.IsValid) return new InvalidModelStateResult(ModelState,this);
-            BatchProcessor.BatchProcessor.StartNew(command);
+            BatchProcessor batch = new BatchProcessor(command);
+            batch.StartNew();
             return Ok();
         }
 

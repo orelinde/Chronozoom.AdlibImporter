@@ -95,6 +95,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BatchCommand.cs" />
+    <Compile Include="Models\ChronoZoom\ContentItem.cs" />
+    <Compile Include="Models\ChronoZoom\Timeline.cs" />
     <Compile Include="Models\GroupAction.cs" />
     <Compile Include="Models\XmlMappings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

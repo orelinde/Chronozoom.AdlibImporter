@@ -30,12 +30,16 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
             }
         }
 
-        public static List<AdlibRecord> GetContentItemsByFacets(string url, string database, string facet, AdlibFacetsRecords rootFacets,string titleElement)
+        public static ConcurrentDictionary<string,List<AdlibRecord>> GetContentItemsByFacets(string url, string database, string facet, AdlibFacetsRecords rootFacets,string titleElement)
         {
-            var items = new ConcurrentBag<AdlibRecord>();
+            var totalItems = new ConcurrentDictionary<string,List<AdlibRecord>>();
 
+            // Loop over all the facets
             Parallel.ForEach(rootFacets.Records, rfacet =>
             {
+                var items = new List<AdlibRecord>();
+
+                // Download all the items by facet
                 using (var client = new HttpClient())
                 {
                     var uri = String.Format("{0}/wwwopac.ashx?database={1}&search={2}={3}&xmltype=unstructured", url,
@@ -46,6 +50,8 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
                     document.Load(new StringReader(result));
 
                     var records = document.GetElementsByTagName("record");
+
+                    // Get the inner fields of the axiell xml record
                     foreach (XmlElement record in records)
                     {
                         var rec = new AdlibRecord();
@@ -55,9 +61,11 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
                         items.Add(rec);
                     }
                 }
+                //Add facet with records i.e. | creator | list<objects> |
+                totalItems.GetOrAdd(rfacet.Term,items);
             });
 
-            return items.ToList();
+            return totalItems;
         }
 
         private static string GetTitleElement(XmlNodeList childNodes, string titleElement)
@@ -76,6 +84,11 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
             public string Title { get; set; }
             public int Priref { get; set; }
             public XmlNodeList Properties { get; set; }
+
+            public List<XmlNode> GetNodes()
+            {
+                return this.Properties.Cast<XmlNode>().ToList();
+            }
 
         }
     }
