@@ -62,6 +62,7 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
 
         private void StartGroupingItems(ConcurrentDictionary<string, List<AdlibApi.AdlibRecord>> dictionary, Timeline timeline)
         {
+            //Loop through the dictionary with the first action
             for (int i = 0; i < dictionary.Count; i++)
             {
                 var key = dictionary.Keys.ToList()[i];
@@ -71,9 +72,10 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 var children = new ConcurrentBag<ContentItem>();
                 Task t = Task.Factory.StartNew((() =>
                 {
-                    // <GroupAction, List<ContentItems>
+                    // Stack to plac nodes on so list with i.e. Creators => Techniques => Material
                     var stack = new Stack<Tuple<GroupAction, List<AdlibApi.AdlibRecord>>>();
-                    // Skip the first action because that is the root with items. 
+                   
+                    // Loop over al lthe actions to group the data by
                     for (var j = 0; j < command.Actions.Count(); j++)
                     {
                         var action = command.Actions[j];
@@ -83,13 +85,12 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                             List<AdlibApi.AdlibRecord> adlibRecords = GetItemsByCommandAndRemoveFromList(stack.Peek().Item2,action);
                             var tuple = new Tuple<GroupAction, List<AdlibApi.AdlibRecord>>(command.Actions[j], adlibRecords);
                             stack.Push(tuple);
-                            Debug.WriteLine("j!=0");
                         }
+                            // j == 0 create stack and place the first values in it
                         else
                         {
                             var tuple = new Tuple<GroupAction, List<AdlibApi.AdlibRecord>>(command.Actions[j], values);
                             stack.Push(tuple);
-                            Debug.WriteLine("J==0");
                         }
                     }
                     // Traverse stack and create parent items
@@ -98,16 +99,25 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             }
         }
 
-        private List<AdlibApi.AdlibRecord> GetItemsByCommandAndRemoveFromList(List<AdlibApi.AdlibRecord> item2,GroupAction action)
+        /// <summary>
+        /// Takes all the items from the parent by action and removes them from the parent. 
+        /// This means that all items are available on that node, and from there on we take the 
+        /// items that we need to the next node. so if we want to create a timeline with grouping Creators => Technique => Material
+        /// then we start taking all the items from creators which has a technique, and returns this list
+        /// </summary>
+        /// <param name="parentList">The list with items i.e. Creators</param>
+        /// <param name="action">The action what it should take from the list i.e Technique</param>
+        /// <returns></returns>
+        private List<AdlibApi.AdlibRecord> GetItemsByCommandAndRemoveFromList(List<AdlibApi.AdlibRecord> parentList,GroupAction action)
         {
             var items = new List<AdlibApi.AdlibRecord>();
-            foreach (var record in item2)
+            foreach (var record in parentList)
             {
                 items.AddRange(from node in record.GetNodes() where node.Name == action.GroupBy select record);
             }
             foreach (var record in items)
             {
-                item2.Remove(record);
+                parentList.Remove(record);
             }
             return items;
         }
