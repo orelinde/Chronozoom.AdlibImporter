@@ -18,7 +18,7 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
     {
         public static AdlibFacetsRecords GetFacets(string url, string database, string facet)
         {
-            var uri = String.Format("{0}/wwwopac.ashx?database={1}&command=facets&search=all&facet={2}&xmltype=unstructured&limit=800", url, database, facet);
+            var uri = String.Format("{0}/wwwopac.ashx?database={1}&command=facets&search=all&facet={2}&xmltype=unstructured&limit=50&startfrom=450", url, database, facet);
             using (var client = new HttpClient())
             {
                 client.Timeout = Timeout.InfiniteTimeSpan;
@@ -33,37 +33,44 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
         public static ConcurrentDictionary<string,List<AdlibRecord>> GetContentItemsByFacets(string url, string database, string facet, AdlibFacetsRecords rootFacets,string titleElement)
         {
             var totalItems = new ConcurrentDictionary<string,List<AdlibRecord>>();
-
+            var tasks = new List<Task>();
             // Loop over all the facets
-            Parallel.ForEach(rootFacets.Records, rfacet =>
+            foreach (var facetrecord in rootFacets.Records)
             {
-                var items = new List<AdlibRecord>();
-
-                // Download all the items by facet
-                using (var client = new HttpClient())
+                var facetrecord1 = facetrecord;
+                var task = Task.Factory.StartNew(() =>
                 {
-                    var uri = String.Format("{0}/wwwopac.ashx?database={1}&search={2}={3}&xmltype=unstructured", url,
-                        database, facet, rfacet.Term);
-                    client.Timeout = Timeout.InfiniteTimeSpan;
-                    string result = client.GetStringAsync(new Uri(uri)).Result;
-                    XmlDocument document = new XmlDocument();
-                    document.Load(new StringReader(result));
+                    var items = new List<AdlibRecord>();
 
-                    var records = document.GetElementsByTagName("record");
-
-                    // Get the inner fields of the axiell xml record
-                    foreach (XmlElement record in records)
+                    // Download all the items by facet
+                    using (var client = new HttpClient())
                     {
-                        var rec = new AdlibRecord();
-                        rec.Priref = int.Parse(record.Attributes.GetNamedItem("priref").Value);
-                        rec.Properties = record.ChildNodes;
-                        rec.Title = GetTitleElement(record.ChildNodes, titleElement);
-                        items.Add(rec);
+                        var uri = String.Format("{0}/wwwopac.ashx?database={1}&search={2}='{3}'&xmltype=unstructured", url,
+                            database, facet, facetrecord1.Term);
+                        client.Timeout = Timeout.InfiniteTimeSpan;
+                        string result = client.GetStringAsync(new Uri(uri)).Result;
+                        XmlDocument document = new XmlDocument();
+                        document.Load(new StringReader(result));
+
+                        var records = document.GetElementsByTagName("record");
+
+                        // Get the inner fields of the axiell xml record
+                        foreach (XmlElement record in records)
+                        {
+                            var rec = new AdlibRecord();
+                            rec.Priref = int.Parse(record.Attributes.GetNamedItem("priref").Value);
+                            rec.Properties = record.ChildNodes;
+                            rec.Title = GetTitleElement(record.ChildNodes, titleElement);
+                            items.Add(rec);
+                        }
                     }
-                }
-                //Add facet with records i.e. | creator | list<objects> |
-                totalItems.GetOrAdd(rfacet.Term,items);
-            });
+                    
+                    //Add facet with records i.e. | creator | list<objects> |
+                    totalItems.GetOrAdd(facetrecord1.Term, items);
+                });
+                tasks.Add(task);
+            }
+            Task.WaitAll(tasks.ToArray());
 
             return totalItems;
         }

@@ -28,7 +28,7 @@
 
     var getMetadata = function (url,database, callback) {
         $.ajax({
-            url: url + 'wwwopac.ashx?&database=' + database + '&output=json&command=getmetadata',
+            url: url + 'wwwopac.ashx?&database=' + database + '&output=json&command=getmetadata&search=all',
             type: "GET",
             dataType: "jsonp",
             async: true,

@@ -3,8 +3,9 @@
     /* Makes the inputUrl on loading state and the input form 
     visible if the data is correctly received. Also will the select lists be populated 
     with the xml elements*/
-    var getXmlElementsFromUrl = function (whichurl) {
-
+    var whichurl = 0;
+    var getXmlElementsFromUrl = function (todourl) {
+        whichurl = todourl;
         // Hide the input form
         inputFormIsVisisble(false);
         actionFormIsVisisble(false);
@@ -54,7 +55,7 @@
         // TODO: remove -- debug only
         if (whichurl === 1) {
             url = "http://amdata.adlibsoft.com/";
-            database = "AMlibrary";
+            database = "AMCollect";
         }
         // Call api and make url part in loading state
         Importer.Webhandler.GetXmlElementsFromUrl(url, database, callback);
@@ -115,6 +116,13 @@
         // Data source
         var url = htmlElementValue("url");
         var database = htmlElementValue("database");
+        var imageslocation = htmlElementValue("imageslocation");
+
+        // TODO: remove -- debug only
+        if (whichurl === 1) {
+            url = "http://amdata.adlibsoft.com/";
+            database = "AMCollect";
+        }
 
         // Timeline elements
         var timelineTitle = htmlElementValue("timelinetitle");
@@ -137,7 +145,8 @@
                 Begindate: begindate,
                 Enddate: enddate,
                 Images: images,
-                Id : id
+                Id: id,
+                ImagesLocation: imageslocation
             },
             Actions:actions,
             Title: timelineTitle,
