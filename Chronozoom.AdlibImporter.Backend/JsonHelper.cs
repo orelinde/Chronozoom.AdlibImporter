@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace Chronozoom.AdlibImporter.Backend
 {
@@ -19,6 +20,7 @@ namespace Chronozoom.AdlibImporter.Backend
             StringBuilder builder = new StringBuilder();
             builder.Append("\"").Append(key).Append("\" : ");
             if (value == null) return builder.Append("\"\"").Append(lastProperty ? "" : ",").ToString();
+            if (value.GetType() == typeof (string)) value = (string)JsonEncodeString((string)value);
             if (IsNumeric(value))
             {
                 builder.Append(value);
@@ -31,6 +33,11 @@ namespace Chronozoom.AdlibImporter.Backend
             }
            
             return builder.ToString();
+        }
+
+        private static string JsonEncodeString(string value)
+        {
+            return HttpUtility.JavaScriptStringEncode(value);
         }
 
         private static bool IsNumeric(object value)
@@ -61,7 +68,7 @@ namespace Chronozoom.AdlibImporter.Backend
             {
                 for (int i = 0; i < pictureUrLs.Count; i++)
                 {
-                    builder.Append(i == pictureUrLs.Count
+                    builder.Append(i+1 == pictureUrLs.Count
                         ? AppendLineToArray(pictureUrLs[i], true)
                         : AppendLineToArray(pictureUrLs[i], false));
                 }
@@ -69,6 +76,7 @@ namespace Chronozoom.AdlibImporter.Backend
             builder.Append("]");
             builder.Append(lastitem ? "" : ",");
             return builder.ToString();
+            
         }
 
         private static string AppendLineToArray(string line, bool isLast)

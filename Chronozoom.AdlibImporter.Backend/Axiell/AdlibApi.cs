@@ -18,7 +18,7 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
     {
         public static AdlibFacetsRecords GetFacets(string url, string database, string facet)
         {
-            var uri = String.Format("{0}/wwwopac.ashx?database={1}&command=facets&search=all&facet={2}&xmltype=unstructured&limit=50&startfrom=450", url, database, facet);
+            var uri = String.Format("{0}/wwwopac.ashx?database={1}&command=facets&search=all&facet={2}&xmltype=unstructured&limit=5&startfrom=95", url, database, facet);
             using (var client = new HttpClient())
             {
                 client.Timeout = Timeout.InfiniteTimeSpan;
@@ -26,7 +26,6 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
                 XmlSerializer serializer = new XmlSerializer(typeof(AdlibFacetsRecords));
                 StringReader reader = new StringReader(result);
                 return (AdlibFacetsRecords)serializer.Deserialize(reader);
-
             }
         }
 
@@ -35,6 +34,7 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
             var totalItems = new ConcurrentDictionary<string,List<AdlibRecord>>();
             var tasks = new List<Task>();
             // Loop over all the facets
+
             foreach (var facetrecord in rootFacets.Records)
             {
                 var facetrecord1 = facetrecord;

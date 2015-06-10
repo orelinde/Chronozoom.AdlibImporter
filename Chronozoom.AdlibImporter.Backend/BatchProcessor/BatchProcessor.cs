@@ -32,15 +32,20 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
 
                 AdlibFacetsRecords adlibFacetsRecords = AdlibApi.GetFacets(command.BaseUrl, command.Database, command.Actions[0].GroupBy);
                 var dictionary = AdlibApi.GetContentItemsByFacets(command.BaseUrl, command.Database, command.Actions[0].GroupBy, adlibFacetsRecords, command.Mappings.Title);
-                List<ContentItem> items = StartGroupingItems(dictionary, timeline);
-                timeline.BeginDate = items.Min(r => r.BeginDate);
-                timeline.EndDate = items.Max(r => r.EndDate);
+                var items = StartGroupingItems(dictionary, timeline);
+
+                if (items.Any())
+                {
+                    timeline.BeginDate = items.Min(r => r.BeginDate);
+                    timeline.EndDate = items.Max(r => r.EndDate);
+                }
+
                 File.AppendAllText(filename, timeline.ToString() + "\r\n");
-                WriteChildrenToFile(items,timeline);
+                WriteChildrenToFile(items, timeline);
             });
         }
 
-        private void WriteChildrenToFile(List<ContentItem> items,Timeline timeline)
+        private void WriteChildrenToFile(IEnumerable<ContentItem> items, Timeline timeline)
         {
             foreach (var ci in items)
             {
@@ -84,7 +89,7 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             return timeline;
         }
 
-        private List<ContentItem> StartGroupingItems(ConcurrentDictionary<string, List<AdlibApi.AdlibRecord>> dictionary, Timeline timeline)
+        private IEnumerable<ContentItem> StartGroupingItems(ConcurrentDictionary<string, List<AdlibApi.AdlibRecord>> dictionary, Timeline timeline)
         {
             List<Task> tasks = new List<Task>();
             var children = new ConcurrentBag<ContentItem>();
@@ -98,27 +103,27 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 var i1 = i;
                 Task t = Task.Factory.StartNew((() =>
                 {
-                    // Stack to place nodes on so list with i.e. Creators => Techniques => Material
-                    var stack = new Stack<Tuple<GroupAction, List<AdlibApi.AdlibRecord>>>();
+                // Stack to place nodes on so list with i.e. Creators => Techniques => Material
+                var stack = new Stack<Tuple<GroupAction, List<AdlibApi.AdlibRecord>>>();
 
-                    // Loop over al lthe actions to group the data by
-                    for (var j = 0; j < command.Actions.Count(); j++)
+                // Loop over all the actions to group the data by
+                for (var j = 0; j < command.Actions.Count(); j++)
+                {
+                    var action = command.Actions[j];
+                    if (j != 0)
                     {
-                        var action = command.Actions[j];
-                        if (j != 0)
-                        {
-                            List<AdlibApi.AdlibRecord> adlibRecords = GetItemsByCommandAndRemoveFromList(stack.Peek().Item2, action);
-                            var tuple = new Tuple<GroupAction, List<AdlibApi.AdlibRecord>>(command.Actions[j], adlibRecords);
-                            stack.Push(tuple);
-                        }
-                        // j == 0 create stack and place the first values in it
-                        else
-                        {
-                            var tuple = new Tuple<GroupAction, List<AdlibApi.AdlibRecord>>(command.Actions[j], values);
-                            stack.Push(tuple);
-                        }
+                        List<AdlibApi.AdlibRecord> adlibRecords = GetItemsByCommandAndRemoveFromList(stack.Peek().Item2, action);
+                        var tuple = new Tuple<GroupAction, List<AdlibApi.AdlibRecord>>(command.Actions[j], adlibRecords);
+                        stack.Push(tuple);
                     }
-                    children.Add(TraverseStackAndCreateContentItems(stack));
+                    // j == 0 create stack and place the first values in it
+                    else
+                    {
+                        var tuple = new Tuple<GroupAction, List<AdlibApi.AdlibRecord>>(command.Actions[j], values);
+                        stack.Push(tuple);
+                    }
+                }
+                children.Add(TraverseStackAndCreateContentItems(stack));
                 }));
                 tasks.Add(t);
             }
@@ -127,7 +132,8 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             {
                 ci.ParentId = timeline.Id;
             }
-            return children.ToList();
+            IEnumerable<ContentItem> contentItems = children.Reverse();
+            return contentItems;
         }
 
         private ContentItem TraverseStackAndCreateContentItems(Stack<Tuple<GroupAction, List<AdlibApi.AdlibRecord>>> stack)
@@ -135,9 +141,10 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             ContentItem deeperItem = null;
             while (stack.Count > 0)
             {
+                //Todo group by action -> so not just material but: stone wood coal and link items to thos cats instead of one cat
                 var item = stack.Pop();
                 var category = CreateParentItem(item.Item1.CategoryName);
-                category.Children = CreateChildren(item.Item2, category.Id);
+                category.Children = CreateChildrenAndGroupByAction(item.Item2, category.Id, item.Item1.GroupBy);
 
                 if (deeperItem != null)
                 {
@@ -183,10 +190,11 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             };
         }
 
-        private List<ContentItem> CreateChildren(List<AdlibApi.AdlibRecord> item2, long parentid)
+        private List<ContentItem> CreateChildrenAndGroupByAction(List<AdlibApi.AdlibRecord> item2, long parentid, string groupBy)
         {
             ConcurrentBag<ContentItem> items = new ConcurrentBag<ContentItem>();
-            Parallel.ForEach(item2, item =>
+            var dict = new Dictionary<String,ContentItem>();
+            foreach (var item in item2)
             {
                 var ci = new ContentItem();
                 ci.Title = GetNodeFromAdlibRecord(item, command.Mappings.Title);
@@ -199,10 +207,26 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 ci.Id = GetNextId();
                 ci.ParentId = parentid;
                 ci.Children = new List<ContentItem>();
-                if ((ci.BeginDate == -1 && ci.EndDate == -1) || (ci.BeginDate > ci.EndDate)) return;
-                items.Add(ci);
-            });
-            return items.ToList();
+                if ((ci.BeginDate == -1 && ci.EndDate == -1) || (ci.BeginDate > ci.EndDate)) continue;
+
+                if (dict.ContainsKey(GetNodeFromAdlibRecord(item, groupBy)))
+                {
+                    ContentItem dictCi;
+                    dict.TryGetValue(GetNodeFromAdlibRecord(item, groupBy), out dictCi);
+                    dictCi.Children.Add(ci);
+                }
+                else
+                {
+                    var category = new ContentItem()
+                    {
+                        Title = GetNodeFromAdlibRecord(item, groupBy)
+                    };
+                    dict.Add(GetNodeFromAdlibRecord(item, groupBy),category);
+                    category.Children = new List<ContentItem>();
+                    category.Children.Add(ci);
+                }
+            };
+            return dict.Values.ToList();
         }
 
         private long GetNextId()
@@ -252,7 +276,12 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             var items = new List<AdlibApi.AdlibRecord>();
             foreach (var record in parentList)
             {
-                items.AddRange(from node in record.GetNodes() where node.Name == action.GroupBy select record);
+                //items.AddRange(record.GetNodes().Where(node => node.Name == action.GroupBy).Select(node => record));
+                var list = record.GetNodes();
+                if (list.Any(r => r.Name == action.GroupBy))
+                {
+                    items.Add(record);
+                }
             }
             foreach (var record in items)
             {

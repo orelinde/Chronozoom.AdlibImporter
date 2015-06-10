@@ -145,9 +145,9 @@
                 Begindate: begindate,
                 Enddate: enddate,
                 Images: images,
-                Id: id,
-                ImagesLocation: imageslocation
+                Id: id
             },
+            ImagesLocation: imageslocation,
             Actions:actions,
             Title: timelineTitle,
             Description : timelineDescription

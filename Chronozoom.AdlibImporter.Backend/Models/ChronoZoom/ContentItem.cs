@@ -31,7 +31,6 @@ namespace Chronozoom.AdlibImporter.Backend.Models.ChronoZoom
             builder.Append(JsonHelper.PropertyToJson("EndDate", EndDate));
             builder.Append(JsonHelper.PropertyToJson("HasChildren", HasChildren));
             builder.Append(JsonHelper.PropertyToJson("ParentId", ParentId));
-            builder.Append(JsonHelper.PropertyToJson("HasChildren", HasChildren));
             builder.Append(JsonHelper.PropertyToJson("SourceURL", SourceURL));
             builder.Append(JsonHelper.ArrayToJson("PictureURLs", PictureURLs,false));
             builder.Append(JsonHelper.PropertyToJson("SourceRef", SourceRef,true));
