@@ -11,6 +11,7 @@ using System.Xml;
 using Chronozoom.AdlibImporter.Backend.Axiell;
 using Chronozoom.AdlibImporter.Backend.Models;
 using Chronozoom.AdlibImporter.Backend.Models.ChronoZoom;
+using Newtonsoft.Json;
 
 namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
 {
@@ -42,7 +43,19 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
 
                 File.AppendAllText(filename, timeline.ToString() + "\r\n");
                 WriteChildrenToFile(items, timeline);
+
+                timeline.RootContentItem = CreateParentItem("Timeline");
+                timeline.RootContentItem.Children = items.ToList();
+                timeline.RootContentItem.ParentId = timeline.Id;
+                WriteTimelineToJson(timeline,filepath);
             });
+        }
+
+        private void WriteTimelineToJson(Timeline timeline, string filepath)
+        {
+            var jsonTimeline = JsonConvert.SerializeObject(timeline);
+            filename = String.Format("{0}App_Data\\Batch-{1}-json.txt", filepath, DateTime.UtcNow.Ticks);
+            File.WriteAllText(filename, jsonTimeline);
         }
 
         private void WriteChildrenToFile(IEnumerable<ContentItem> items, Timeline timeline)
