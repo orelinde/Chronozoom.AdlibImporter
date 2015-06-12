@@ -220,6 +220,7 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 ci.Id = GetNextId();
                 ci.ParentId = parentid;
                 ci.Children = new List<ContentItem>();
+                ci.HasChildren = false;
                 if ((ci.BeginDate == -1 && ci.EndDate == -1) || (ci.BeginDate > ci.EndDate)) continue;
 
                 if (dict.ContainsKey(GetNodeFromAdlibRecord(item, groupBy)))
@@ -239,6 +240,16 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                     category.Children.Add(ci);
                 }
             };
+
+            // Set begin and end dates
+            foreach (var item in dict.Values.ToList())
+            {
+                if (item.Children.Any())
+                {
+                    item.BeginDate = item.Children.Min(r => r.BeginDate);
+                    item.EndDate = item.Children.Max(r => r.EndDate);
+                }
+            }
             return dict.Values.ToList();
         }
 

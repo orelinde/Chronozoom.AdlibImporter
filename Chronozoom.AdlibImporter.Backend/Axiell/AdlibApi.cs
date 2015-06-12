@@ -18,7 +18,7 @@ namespace Chronozoom.AdlibImporter.Backend.Axiell
     {
         public static AdlibFacetsRecords GetFacets(string url, string database, string facet)
         {
-            var uri = String.Format("{0}/wwwopac.ashx?database={1}&command=facets&search=all&facet={2}&xmltype=unstructured&limit=5&startfrom=95", url, database, facet);
+            var uri = String.Format("{0}/wwwopac.ashx?database={1}&command=facets&search=all&facet={2}&xmltype=unstructured&limit=30000", url, database, facet); //limit=5&startfrom=95
             using (var client = new HttpClient())
             {
                 client.Timeout = Timeout.InfiniteTimeSpan;
