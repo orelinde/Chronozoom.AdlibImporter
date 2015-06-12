@@ -41,12 +41,14 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                     timeline.EndDate = items.Max(r => r.EndDate);
                 }
 
-                File.AppendAllText(filename, timeline.ToString() + "\r\n");
-                WriteChildrenToFile(items, timeline);
+                
 
                 timeline.RootContentItem = CreateParentItem("Timeline");
                 timeline.RootContentItem.Children = items.ToList();
                 timeline.RootContentItem.ParentId = timeline.Id;
+
+                File.AppendAllText(filename, timeline.ToString() + "\r\n");
+                WriteChildrenToFile(items, timeline);
                 WriteTimelineToJson(timeline,filepath);
             });
         }
@@ -69,6 +71,7 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
 
         private void WriteChildrenRecursive(ContentItem contentItem)
         {
+            contentItem.HasChildren = contentItem.Children.Any() ? true : false;
             File.AppendAllText(filename, contentItem.ToString() + "\r\n");
             if (contentItem.Children == null) return;
             foreach (var child in contentItem.Children)
@@ -114,8 +117,8 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 dictionary.TryGetValue(key, out values);
 
                 var i1 = i;
-                //Task t = Task.Factory.StartNew((() =>
-                //{
+                Task t = Task.Factory.StartNew((() =>
+                {
                 // Stack to place nodes on so list with i.e. Creators => Techniques => Material
                 var stack = new Stack<Tuple<GroupAction, List<AdlibApi.AdlibRecord>>>();
 
@@ -137,8 +140,8 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                     }
                 }
                 children.Add(TraverseStackAndCreateContentItems(stack));
-               // }));
-               // tasks.Add(t);
+                }));
+                tasks.Add(t);
             }
             Task.WaitAll(tasks.ToArray());
             foreach (ContentItem ci in children)
@@ -171,25 +174,6 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 }
                 deeperItem = category;
             }
-            //ContentItem child = null;
-            //while (stack.Count > 0)
-            //{
-            //    var item = stack.Pop();
-            //    ContentItem parent = CreateParentItem(item.Item1.CategoryName);
-            //    List<ContentItem> children = CreateChildren(item.Item2, parent.Id);
-            //    parent.Children = children;
-            //    if (child != null)
-            //    {
-            //        parent.Children.Add(child);
-            //        parent.ParentId = child.Id;
-            //    }
-            //    if (parent.Children.Any())
-            //    {
-            //        parent.BeginDate = parent.Children.Min(r => r.BeginDate);
-            //        parent.EndDate = parent.Children.Max(r => r.EndDate);
-            //    }
-            //    child = parent;
-            //}
             return deeperItem;
         }
 
@@ -304,7 +288,6 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
             var items = new List<AdlibApi.AdlibRecord>();
             foreach (var record in parentList)
             {
-                //items.AddRange(record.GetNodes().Where(node => node.Name == action.GroupBy).Select(node => record));
                 var list = record.GetNodes();
                 if (list.Any(r => r.Name == action.GroupBy))
                 {
