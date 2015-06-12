@@ -114,8 +114,8 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 dictionary.TryGetValue(key, out values);
 
                 var i1 = i;
-                Task t = Task.Factory.StartNew((() =>
-                {
+                //Task t = Task.Factory.StartNew((() =>
+                //{
                 // Stack to place nodes on so list with i.e. Creators => Techniques => Material
                 var stack = new Stack<Tuple<GroupAction, List<AdlibApi.AdlibRecord>>>();
 
@@ -137,8 +137,8 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                     }
                 }
                 children.Add(TraverseStackAndCreateContentItems(stack));
-                }));
-                tasks.Add(t);
+               // }));
+               // tasks.Add(t);
             }
             Task.WaitAll(tasks.ToArray());
             foreach (ContentItem ci in children)
@@ -227,14 +227,18 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                 {
                     ContentItem dictCi;
                     dict.TryGetValue(GetNodeFromAdlibRecord(item, groupBy), out dictCi);
+                    ci.ParentId = dictCi.Id;
                     dictCi.Children.Add(ci);
                 }
                 else
                 {
                     var category = new ContentItem()
                     {
-                        Title = GetNodeFromAdlibRecord(item, groupBy)
+                        Title = GetNodeFromAdlibRecord(item, groupBy),
+                        Id = GetNextId(),
+                        ParentId = parentid
                     };
+                    ci.ParentId = category.Id;
                     dict.Add(GetNodeFromAdlibRecord(item, groupBy),category);
                     category.Children = new List<ContentItem>();
                     category.Children.Add(ci);
