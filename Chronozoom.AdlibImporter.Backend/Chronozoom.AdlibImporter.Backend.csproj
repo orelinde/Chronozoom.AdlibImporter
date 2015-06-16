@@ -90,6 +90,9 @@
     <Compile Include="Axiell\AdlibFacetsRecords.cs" />
     <Compile Include="Axiell\Diagnostic.cs" />
     <Compile Include="BatchProcessor\BatchProcessor.cs" />
+    <Compile Include="BatchProcessor\WebClientInfinite.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controllers\BatchController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

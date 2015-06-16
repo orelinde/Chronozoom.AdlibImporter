@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -41,16 +42,37 @@ namespace Chronozoom.AdlibImporter.Backend.BatchProcessor
                     timeline.EndDate = items.Max(r => r.EndDate);
                 }
 
-                
-
                 timeline.RootContentItem = CreateParentItem("Timeline");
                 timeline.RootContentItem.Children = items.ToList();
                 timeline.RootContentItem.ParentId = timeline.Id;
 
                 File.AppendAllText(filename, timeline.ToString() + "\r\n");
                 WriteChildrenToFile(items, timeline);
+                PostToApi(filename);
+
                 WriteTimelineToJson(timeline,filepath);
+                
             });
+        }
+
+        private void PostToApi(string filename)
+        {
+            bool error = false;
+            try
+            {
+                using (WebClient client = new WebClientInfinite())
+                {
+                    client.UploadFile("http://www.kompili.nl/ChronozoomApi/api/Batch", filename);
+                }
+            }
+            catch (Exception ex)
+            {
+                error = true;
+            }
+            if (!error)
+            {
+                File.Delete(filename);
+            }
         }
 
         private void WriteTimelineToJson(Timeline timeline, string filepath)
