@@ -53,7 +53,7 @@
     //Send the batch command
     var createBatchCommand = function (batchCommand, createBatchCallback) {
         
-        $.post("http://localhost:13442/api/batch", batchCommand).fail(function (data) {
+        $.post("http://www.kompili.nl/importerapi//batch", batchCommand).fail(function (data) {
             if (data.responseJSON.hasOwnProperty("ModelState")) {
                 var errors = [];
                 for (var property in data.responseJSON.ModelState) {
